@@ -1,0 +1,67 @@
+﻿<Window x:Name="window" x:Class="AnadoluAjansı.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:local="clr-namespace:AnadoluAjansı"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="HABERLER"
+    Width="510"
+    Height="280"
+    mc:Ignorable="d">
+    <Grid>
+        <DataGrid x:Name="dataGrid" DataContext="{DynamicResource Data}"
+            AutoGenerateColumns="False"
+            IsReadOnly="True"
+            ItemsSource="{Binding XPath=/rss/channel/item}">
+            <DataGrid.Resources>
+                <XmlDataProvider x:Key="Data"
+                    IsAsynchronous="True"
+                    Source="https://www.aa.com.tr/tr/rss/default?cat=guncel" />
+            </DataGrid.Resources>
+            <i:Interaction.Triggers>
+                <ei:KeyTrigger Key="F5">
+                    <i:InvokeCommandAction Command="{Binding DataContext.Yenile, ElementName=window}" CommandParameter="{Binding ElementName=dataGrid, Mode=OneWay}"/>
+                </ei:KeyTrigger>
+            </i:Interaction.Triggers>
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="RESİM">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Width="100" Source="{Binding XPath=image}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseLeftButtonDown">
+                                        <ei:LaunchUriOrFileAction Path="{Binding XPath=link}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Image>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn
+                    Binding="{Binding XPath=title}"
+                    Header="BAŞLIK"
+                    Width="150"
+                    ClipboardContentBinding="{x:Null}">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="TextWrapping" Value="Wrap" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn
+                    Binding="{Binding XPath=description}"
+                    Header="AÇIKLAMA"
+                    Width="200"
+                    ClipboardContentBinding="{x:Null}">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="TextWrapping" Value="Wrap" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>
